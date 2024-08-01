@@ -71,7 +71,8 @@ app.put("/tasks/:id", async (req,res,next) => {
         const collection = db.collection("to-do-list");
         const updatedTask = {
             title: req.body.title,
-            description: req.body.description
+            description: req.body.description,
+            tags: req.body.tags
         };
         const id = new ObjectId(req.params.id);
         //console.log(req.body);

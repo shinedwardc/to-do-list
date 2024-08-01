@@ -19,15 +19,11 @@ const Task = ({task}) => {
             {"Task created at " + date.toDateString()}
             </Typography>
             <div>
-                {task.tags.length > 0 ? task.tags.map((tag,index) => (
+                {task.tags && task.tags.map((tag,index) => (
                     <span key={index} style={{ marginRight: 8, backgroundColor: tag.color, borderRadius: 15, padding: 5 }}>
                     {tag.tag}
                     </span>
-                )) 
-                : 
-                (
-                    <></>
-                )}
+                ))}
             </div>
         </CardContent>
     )
