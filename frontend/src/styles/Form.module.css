@@ -1,0 +1,25 @@
+.questionnare {
+    display: 'flex';
+    flex-direction: 'column';
+ 
+}
+
+.tagForm {
+    border: 1px solid red;
+    margin-top: 20px;
+    padding-bottom: 20px;
+}
+
+.tag {
+    display: 'flex';
+    flex-direction: 'row';
+    justify-content: 'center'
+}
+
+.form {
+    
+}
+
+.button {
+    margin-top: 10px;
+}
