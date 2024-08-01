@@ -45,13 +45,15 @@ const Body = () => {
     const addTask = async (formData) => {
         console.log('formData: ', formData);
         //console.log(formData.tag.json());
-        updateTaskList([...taskList, formData]);
+        
         try {
             //console.log(formData);
             const response = await ky.post(`http://localhost:3000/task`, {
                 json: formData
             }).json();
             console.log(response);
+            updateTaskList(prev => [...prev,response]);
+            console.log('Task added successfully');
         } catch (error) {
             console.error('Could not post task');
         } 
@@ -123,7 +125,7 @@ const Body = () => {
                                 <Grid sx = {{border: '1px solid red', maxWidth: 1000, margin: '0 auto'}} container direction = "column" justifyContent = "space-between" alignItems = "center">
                                 {!isLoading ?
                                 taskList.map((task,index) => (
-                                    <Draggable key = {task._id.toString()} draggableId={task._id.toString()} index = {index}>
+                                    <Draggable key = {task._id} draggableId={task._id} index = {index}>
                                         {(provided) => (
                                             <Card variant = "outlined"
                                             direction = "column" 

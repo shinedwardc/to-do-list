@@ -1,8 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const { MongoClient, ReturnDocument } = require('mongodb');
-const ObjectId = require('mongodb').ObjectId;
+const { MongoClient, ObjectId } = require('mongodb');
 
 dotenv.config();
 const app = express();
@@ -55,8 +54,9 @@ app.post("/task", async (req,res,next) => {
         const collection = db.collection('to-do-list');
         //console.log(req.body.title);
         //console.log(req.body.description);
-        console.log(req.body.tags);
-        await collection.insertOne({title: req.body.title, description: req.body.description, tags: req.body.tags, createdAt: new Date()});      
+        console.log(req.body);
+        const result = await collection.insertOne({title: req.body.title, description: req.body.description, tags: req.body.tags, createdAt: new Date()});   
+        res.status(201).json({ ...req.body, _id: result.insertedId }); 
     }
     catch (error) {
         res.status(500).json({ message: 'Error connecting to database'});
@@ -98,16 +98,16 @@ app.delete("/tasks/:id", async (req,res,next) => {
             return res.status(500).json({ message: 'Cannot connect to database'});
         }
         const collection = db.collection('to-do-list');
-        const index = parseInt(req.params.index);
+        /*const index = parseInt(req.params.index);
         //console.log(index);
         const allTasks = await collection.find().toArray();
         //console.log(allTasks.length);
         if (index < 0 || index >= allTasks.length){
             return res.status(400).json({ message: 'Invalid index'});
-        }
+        }*/
         //console.log(allTasks[0]);
-        const id = new ObjectId(req.params.id);
-        const deleteResult = await collection.deleteOne({_id: id});
+        console.log(req.body._id)
+        const deleteResult = await collection.deleteOne({_id: new ObjectId(req.params.id)});
         if (deleteResult.deletedCount === 1){
             res.status(200).json({ message: 'Task deleted successfully'});
         }

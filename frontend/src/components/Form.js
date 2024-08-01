@@ -92,7 +92,7 @@ const Form = ({onSubmit, initialValues}) => {
                         {
                         inputs.tags.map((tag,index) => (
                                 (
-                                <div style = {{justifyContent: 'center', margin: 5}}>
+                                <div key = {index} style = {{justifyContent: 'center', margin: 5}}>
                                     <span style = {{backgroundColor: tag.color, borderRadius: 15, padding: 5}}>{tag.tag}</span>
                                     <Button size = "small" style = {{marginLeft: 10}} variant = "outlined" color = "error" startIcon = {<DeleteIcon/>} type = "button" onClick = {() => handleTagDelete(index)}>Remove</Button>
                                 </div>        
