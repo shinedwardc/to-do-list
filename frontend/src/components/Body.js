@@ -48,7 +48,7 @@ const Body = () => {
         
         try {
             //console.log(formData);
-            const response = await ky.post(`http://localhost:3000/task`, {
+            const response = await ky.post(`http://localhost:3000/tasks`, {
                 json: formData
             }).json();
             console.log(response);

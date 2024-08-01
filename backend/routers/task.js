@@ -30,9 +30,10 @@ router.post("/", async (req,res,next) => {
         //console.log(req.body.title);
         //console.log(req.body.description);
         //console.log(req.body);
-        //const result = await collection.insertOne({title: req.body.title, description: req.body.description, tags: req.body.tags, createdAt: new Date()}); 
+        //const result = await collection.insertOne({title: req.body.title, description: req.body.description, tags: req.body.tags, createdAt: new Date()});
+        console.log(task); 
         const newTask = await task.save();  
-        res.status(201).json({ ...newTask, _id: result.insertedId }); 
+        res.status(201).json(newTask); 
     }
     catch (error) {
         res.status(500).json({ message: 'Error connecting to database'});
@@ -41,6 +42,7 @@ router.post("/", async (req,res,next) => {
 
 router.put("/:id", async (req,res,next) => {
     try {
+        console.log(req.params.id);
         const task = await Task.findById(req.params.id);
         task.title = req.body.title
         task.description = req.body.description
@@ -56,7 +58,8 @@ router.put("/:id", async (req,res,next) => {
 
 router.delete("/:id", async (req,res,next) => {
     try {
-        const task = await Task.findById(req.params.id);
+        console.log(req.params.id);
+        const task = await Task.findByIdAndDelete(req.params.id);
         /*const index = parseInt(req.params.index);
         //console.log(index);
         const allTasks = await collection.find().toArray();
@@ -66,9 +69,9 @@ router.delete("/:id", async (req,res,next) => {
         }*/
         //console.log(allTasks[0]);
         if (!task){
-            res.status(404).json({message: 'Task not found'});
+            console.log('not found');
+            return res.status(404).json({message: 'Task not found'});
         }
-        await task.remove();
         res.json({ message: 'Task deleted successfully' });
     } catch (error) {
         res.status(500).json({message: 'Error connecting to database'});
