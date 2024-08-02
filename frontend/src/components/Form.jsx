@@ -8,6 +8,7 @@ const Form = ({ onSubmit, initialValues }) => {
   const [inputs, setInputs] = useState({
     title: "",
     description: "",
+    category: "",
     tags: [],
   });
 
@@ -65,7 +66,7 @@ const Form = ({ onSubmit, initialValues }) => {
     }
     //alert('Submitted task');
     onSubmit(inputs);
-    setInputs({ title: "", description: "", tags: [] });
+    setInputs({ title: "", description: "", category: "", tags: [] });
   };
 
   return (
@@ -87,6 +88,13 @@ const Form = ({ onSubmit, initialValues }) => {
               onChange={handleChange}
               value={inputs.description}
             />
+            <h4>Select a category: </h4>
+            <select name = "category" onChange = {handleChange}>
+              <option value = ""></option>
+              <option value = "urgent">Urgent</option>
+              <option value = "important">Important</option>
+              <option value = "upcoming">Upcoming</option>
+            </select>
           </div>
           <div className={styles.tagForm}>
             <div style={{ paddingBottom: 10 }}>

@@ -44,7 +44,7 @@ const Body = () => {
 
   const addTask = async (formData) => {
     formData.order = taskList.length;
-    //console.log('formData: ', formData);
+    console.log('formData: ', formData);
     //console.log(formData.tag.json());
 
     try {
@@ -125,11 +125,53 @@ const Body = () => {
     }
   };
 
+  const handleSelectChange = (e) => {
+    //console.log(e.target.value);
+    const items = Array.from(taskList);
+    //console.log(items);
+    switch(e.target.value) {
+      case "default":
+        items.sort((a,b) => {
+          return a.order - b.order;
+        });
+        break;
+      case "createdOrder":
+        //console.log(new Date(items[0].createdAt).getTime());
+        //console.log(new Date(items[1].createdAt).getTime());
+        items.sort((a, b) => {
+          const aTime = new Date(a.createdAt).getTime();
+          const bTime = new Date(b.createdAt).getTime();
+          return aTime - bTime;
+        });
+        updateTaskList(items);
+        break;
+      case "ascendAlphabet":
+        items.sort((a,b) => {
+          return (a.title.toLowerCase() < b.title.toLowerCase() ? -1 : 1);
+        });
+        updateTaskList(items);
+        break;
+      case "descendAlphabet":
+        items.sort((a,b) => {
+          return (a.title.toLowerCase() > b.title.toLowerCase() ? -1 : 1);
+        });
+        updateTaskList(items);
+        break;
+    }
+  };
+
   return (
     <>
       <DragDropContext onDragEnd={handleDragEnd}>
         <Form onSubmit={addTask} />
         <h2>Current tasks:</h2>
+        <label for = "sort">Sort by: </label>
+        <select name = "sort" id = "taskSort" onChange = {handleSelectChange}>
+          <option value = "default">Default</option>
+          <option value = "createdOrder">Created order</option>
+          <option value = "ascendAlphabet">Ascending alphabetically</option>
+          <option value = "descendAlphabet">Descending alphabetically</option>
+        </select>
         {taskList.length > 0 ? (
           <>
             <Droppable droppableId="tasks">

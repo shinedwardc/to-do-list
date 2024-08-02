@@ -22,6 +22,7 @@ router.post("/", async (req,res,next) => {
     const task = new Task({
         title: req.body.title,
         description: req.body.description,
+        category: req.body.category,
         tags: req.body.tags,
         order: req.body.order,
         createdAt: new Date()
@@ -47,6 +48,7 @@ router.put("/:id", async (req,res,next) => {
         const task = await Task.findById(req.params.id);
         task.title = req.body.title
         task.description = req.body.description
+        task.category = req.body.category
         task.tags = req.body.tags
         //console.log(req.body);
         const updatedTask = await task.save();
