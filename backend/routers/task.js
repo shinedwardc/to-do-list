@@ -23,6 +23,7 @@ router.post("/", async (req,res,next) => {
         title: req.body.title,
         description: req.body.description,
         tags: req.body.tags,
+        order: req.body.order,
         createdAt: new Date()
       });
     try {
@@ -77,5 +78,18 @@ router.delete("/:id", async (req,res,next) => {
         res.status(500).json({message: 'Error connecting to database'});
     }
 })
+
+router.post("/order", async (req,res,next) => {
+    const { order } = req.body;
+    try {
+        for (let i = 0; i < order.length; i++){
+            await Task.findByIdAndUpdate(order[i],{$set: {order: i}});
+        }
+        res.json({ message: 'Order sorted successfully' });
+    }
+    catch (err){
+        res.status(500).json({ message: 'Updating task order error' });
+    }
+});
 
 module.exports = router;

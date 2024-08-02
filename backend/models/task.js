@@ -6,6 +6,7 @@ const taskSchema = new Schema({
     title: {type: String, required: true},
     description: {type: String, required: true},
     tags: [{tag: String, color: String}],
+    order: Number,
     createdAt: {type: Date, default: Date.now()}
 });
 

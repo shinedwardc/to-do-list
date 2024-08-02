@@ -18,7 +18,10 @@ const Body = () => {
     const fetchTasks = async () => {
         try {
             setIsLoading(true);
-            const tasks = await ky.get('http://localhost:3000/tasks').json();
+            let tasks = await ky.get('http://localhost:3000/tasks').json();
+            tasks.sort((a,b) => {
+                return a.order - b.order;
+            })
             if (Array.isArray(tasks)){
                 updateTaskList(tasks);
             }
@@ -43,7 +46,8 @@ const Body = () => {
     },[editingTaskIndex]);
 
     const addTask = async (formData) => {
-        console.log('formData: ', formData);
+        formData.order = taskList.length;
+        //console.log('formData: ', formData);
         //console.log(formData.tag.json());
         
         try {
@@ -101,7 +105,7 @@ const Body = () => {
 
     }
 
-    const handleDragEnd = (result) => {
+    const handleDragEnd = async (result) => {
         console.log(result);
         if (!result.destination) return;
 
@@ -110,6 +114,15 @@ const Body = () => {
         items.splice(result.destination.index, 0, reorderedItem);
 
         updateTaskList(items);
+
+        try {
+            const response = await ky.post(`http://localhost:3000/tasks/order`, {
+                json: { order: items.map((task) => task._id)}
+            }).json();
+        } catch (error) {
+            console.error(error);
+        }
+        
     };
 
     return (

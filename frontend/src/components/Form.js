@@ -79,8 +79,8 @@ const Form = ({onSubmit, initialValues}) => {
                     <h4>Description: describe more of the task you need to do</h4>
                     <input type = "text" name = "description" onChange = {handleChange} value = {inputs.description} />
                     <div className = {styles.tagForm}>
-                        <h5>Tag (add a list of tags for the task): </h5>
                         <div style = {{paddingBottom: 10}}>
+                            <h5>Tag (add a list of tags for the task): </h5>
                             <input type = "text" name = "tag" value = {currentTag} onChange = {handleTagChange} />
                         </div>
                         <div>
