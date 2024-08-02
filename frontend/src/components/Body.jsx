@@ -157,6 +157,19 @@ const Body = () => {
         });
         updateTaskList(items);
         break;
+      case "category":
+        const categoryOrder = {
+          "urgent": 1,
+          "important": 2,
+          "upcoming": 3
+        }
+        items.sort((a,b) => {
+          const aCategory = categoryOrder[a.category];
+          const bCategory = categoryOrder[b.category];
+          return (aCategory - bCategory);
+        });
+        updateTaskList(items);
+        break;
     }
   };
 
@@ -166,11 +179,12 @@ const Body = () => {
         <Form onSubmit={addTask} />
         <h2>Current tasks:</h2>
         <label for = "sort">Sort by: </label>
-        <select name = "sort" id = "taskSort" onChange = {handleSelectChange}>
+        <select name = "sort" id = "taskSort" onClick = {handleSelectChange}>
           <option value = "default">Default</option>
           <option value = "createdOrder">Created order</option>
           <option value = "ascendAlphabet">Ascending alphabetically</option>
           <option value = "descendAlphabet">Descending alphabetically</option>
+          <option value = "category">Category (in order of Urgent, Important, Upcoming)</option>
         </select>
         {taskList.length > 0 ? (
           <>
