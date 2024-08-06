@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
-import styles from "../styles/Form.module.css";
 import DeleteIcon from "@mui/icons-material/Delete";
-//import { SketchPicker } from 'react-color';
+import { showWarnToast } from "../utility/toast";
+import "react-toastify/dist/ReactToastify.css";
+import styles from "../styles/Form.module.css";
 
 const Form = ({ onSubmit, initialValues }) => {
   const [inputs, setInputs] = useState({
@@ -58,10 +59,16 @@ const Form = ({ onSubmit, initialValues }) => {
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    if (inputs.title === "" || inputs.description === "") {
-      alert(
+    if (inputs.title === "" && inputs.description === "") {
+      showWarnToast(
         "Please fill in at least one character for both title and description",
       );
+      return;
+    } else if (inputs.title === "" && inputs.description !== "") {
+      showWarnToast("Please fill in title");
+      return;
+    } else if (inputs.title !== "" && inputs.description === "") {
+      showWarnToast("Please fill in description");
       return;
     }
     //alert('Submitted task');
@@ -89,11 +96,11 @@ const Form = ({ onSubmit, initialValues }) => {
               value={inputs.description}
             />
             <h4>Select a category: </h4>
-            <select name = "category" onChange = {handleChange}>
-              <option value = ""></option>
-              <option value = "urgent">Urgent</option>
-              <option value = "important">Important</option>
-              <option value = "upcoming">Upcoming</option>
+            <select name="category" onChange={handleChange}>
+              <option value=""></option>
+              <option value="urgent">Urgent</option>
+              <option value="important">Important</option>
+              <option value="upcoming">Upcoming</option>
             </select>
           </div>
           <div className={styles.tagForm}>
@@ -114,7 +121,7 @@ const Form = ({ onSubmit, initialValues }) => {
                 value={currentColor.toString()}
                 onChange={handleColorChange}
               />
-              <label for="colorInput"> Choose a color for the tag</label>
+              <label htmlFor="colorInput"> Choose a color for the tag</label>
             </div>
             <Button onClick={handleTagSubmit} type="button">
               Add tag

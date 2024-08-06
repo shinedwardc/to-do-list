@@ -4,6 +4,7 @@ import Form from "./Form";
 import Task from "./Task";
 import Export from "./Export";
 import Card from "@mui/material/Card";
+import { showSuccessToast } from "../utility/toast";
 import { Grid, Button, Checkbox, CircularProgress } from "@mui/material";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
@@ -12,6 +13,7 @@ const Body = () => {
   const [checkedTasks, updateCheckedTasks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [editingTaskIndex, setEditingTaskIndex] = useState(null);
+  const [selectedSort, setSelectedSort] = useState("");
 
   const fetchTasks = async () => {
     try {
@@ -44,7 +46,7 @@ const Body = () => {
 
   const addTask = async (formData) => {
     formData.order = taskList.length;
-    console.log('formData: ', formData);
+    console.log("formData: ", formData);
     //console.log(formData.tag.json());
 
     try {
@@ -56,6 +58,7 @@ const Body = () => {
         .json();
       console.log(response);
       updateTaskList((prev) => [...prev, response]);
+      showSuccessToast("Successfully submitted task!");
       console.log("Task added successfully");
     } catch (error) {
       console.error("Could not post task");
@@ -76,11 +79,13 @@ const Body = () => {
         console.log("New Task List:", newList);
         return newList;
       });
+      showSuccessToast("Successfully edited task!");
     } catch (error) {
       console.error("Could not call put");
+    } finally {
+      setEditingTaskIndex(null);
+      console.log(editingTaskIndex);
     }
-    setEditingTaskIndex(null);
-    console.log(editingTaskIndex);
   };
 
   const deleteTask = async (indexToDelete) => {
@@ -89,6 +94,7 @@ const Body = () => {
       await ky.delete(`http://localhost:3000/tasks/${taskToDelete._id}`).json();
       updateTaskList(taskList.filter((_, index) => index !== indexToDelete));
       console.log("Task erased successfully");
+      showSuccessToast("Task deleted successfully!");
     } catch (error) {
       console.error("Delete task error");
     }
@@ -107,31 +113,35 @@ const Body = () => {
   const handleDragEnd = async (result) => {
     console.log(result);
     if (!result.destination) return;
-
-    const items = Array.from(taskList);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-
-    updateTaskList(items);
-
-    try {
-      const response = await ky
-        .post(`http://localhost:3000/tasks/order`, {
-          json: { order: items.map((task) => task._id) },
-        })
-        .json();
-    } catch (error) {
-      console.error(error);
+    //console.log(selectedSort);
+    //console.log('source index ',result.source.index);
+    //console.log('destination index ', result.destination.index);
+    if (result.source.index !== result.destination.index) {
+      const items = Array.from(taskList);
+      const [reorderedItem] = items.splice(result.source.index, 1);
+      items.splice(result.destination.index, 0, reorderedItem);
+      updateTaskList(items);
+      setSelectedSort("");
+      try {
+        const response = await ky
+          .post(`http://localhost:3000/tasks/order`, {
+            json: { order: items.map((task) => task._id) },
+          })
+          .json();
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 
   const handleSelectChange = (e) => {
+    setSelectedSort(e.target.value);
     //console.log(e.target.value);
     const items = Array.from(taskList);
     //console.log(items);
-    switch(e.target.value) {
+    switch (e.target.value) {
       case "default":
-        items.sort((a,b) => {
+        items.sort((a, b) => {
           return a.order - b.order;
         });
         break;
@@ -146,27 +156,27 @@ const Body = () => {
         updateTaskList(items);
         break;
       case "ascendAlphabet":
-        items.sort((a,b) => {
-          return (a.title.toLowerCase() < b.title.toLowerCase() ? -1 : 1);
+        items.sort((a, b) => {
+          return a.title.toLowerCase() < b.title.toLowerCase() ? -1 : 1;
         });
         updateTaskList(items);
         break;
       case "descendAlphabet":
-        items.sort((a,b) => {
-          return (a.title.toLowerCase() > b.title.toLowerCase() ? -1 : 1);
+        items.sort((a, b) => {
+          return a.title.toLowerCase() > b.title.toLowerCase() ? -1 : 1;
         });
         updateTaskList(items);
         break;
       case "category":
         const categoryOrder = {
-          "urgent": 1,
-          "important": 2,
-          "upcoming": 3
-        }
-        items.sort((a,b) => {
+          urgent: 1,
+          important: 2,
+          upcoming: 3,
+        };
+        items.sort((a, b) => {
           const aCategory = categoryOrder[a.category];
           const bCategory = categoryOrder[b.category];
-          return (aCategory - bCategory);
+          return aCategory - bCategory;
         });
         updateTaskList(items);
         break;
@@ -178,13 +188,20 @@ const Body = () => {
       <DragDropContext onDragEnd={handleDragEnd}>
         <Form onSubmit={addTask} />
         <h2>Current tasks:</h2>
-        <label for = "sort">Sort by: </label>
-        <select name = "sort" id = "taskSort" onClick = {handleSelectChange}>
-          <option value = "default">Default</option>
-          <option value = "createdOrder">Created order</option>
-          <option value = "ascendAlphabet">Ascending alphabetically</option>
-          <option value = "descendAlphabet">Descending alphabetically</option>
-          <option value = "category">Category (in order of Urgent, Important, Upcoming)</option>
+        <label htmlFor="sort">Sort by: </label>
+        <select
+          name="sort"
+          id="taskSort"
+          value={selectedSort}
+          onChange={handleSelectChange}
+        >
+          <option value=""></option>
+          <option value="createdOrder">Created order</option>
+          <option value="ascendAlphabet">Ascending alphabetically</option>
+          <option value="descendAlphabet">Descending alphabetically</option>
+          <option value="category">
+            Category (in order of Urgent, Important, Upcoming)
+          </option>
         </select>
         {taskList.length > 0 ? (
           <>

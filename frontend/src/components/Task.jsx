@@ -4,16 +4,14 @@ import Typography from "@mui/material/Typography";
 
 const Task = ({ task }) => {
   const date = new Date(task.createdAt);
-  
+
   return (
     <CardContent>
       <Typography gutterBottom variant="h5" component="div">
         {task.title}
       </Typography>
-      <Typography variant="body2">
-        {task.description}
-      </Typography>
-      <Typography variant="body2" color = "text.secondary">
+      <Typography variant="body2">{task.description}</Typography>
+      <Typography variant="body2" color="text.secondary">
         {task.category}
       </Typography>
       <Typography>{"Task created at " + date.toDateString()}</Typography>
