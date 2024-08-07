@@ -49,6 +49,10 @@ const Body = () => {
     }
   }, [editingTaskIndex]);
 
+  useEffect(() => {
+    filterTasks();
+  }, [selectedFilter, search]);
+
   const addTask = async (formData) => {
     formData.order = taskList.length;
     console.log("formData: ", formData);
@@ -188,30 +192,35 @@ const Body = () => {
     }
   };
 
-  const handleFilterChange = (e) => {
-    const filter = e.target.value;
-    console.log(filter);
-    setSelectedFilter(filter);
-    if (filter === "all") {
+  const filterTasks = () => {
+    let filtered = taskList;
+    if (selectedFilter === "all" && search === ""){
       setUseFilteredTasks(false);
-    } else {
-      const filteredTasks = taskList.filter((task) => task.category === filter);
-      console.log(filteredTasks);
-      setUseFilteredTasks(true);
-      updateFilteredTaskList(filteredTasks);
     }
+    else{
+      if (selectedFilter !== "all") {
+        setUseFilteredTasks(true);
+        filtered = filtered.filter((task) => task.category === selectedFilter);
+      }
+      if (search !== "") {
+        setUseFilteredTasks(true);
+        const lowerCaseSearch = search.toLowerCase();
+        filtered = filtered.filter((task) =>
+          task.title.toLowerCase().includes(lowerCaseSearch) ||
+          task.description.toLowerCase().includes(lowerCaseSearch)
+        );
+      }
+      updateFilteredTaskList(filtered);
+    }
+    
+  };
+
+  const handleFilterChange = (e) => {
+    setSelectedFilter(e.target.value);
   };
 
   const handleSearch = (e) => {
-    const searching = e.target.value;
-    setSearch(searching);
-    if (searching === ""){
-      setUseFilteredTasks(false);
-    } else {
-      const filteredTasks = taskList.filter((task) => task.title.includes(searching));
-      setUseFilteredTasks(true);
-      updateFilteredTaskList(filteredTasks);
-    }
+    setSearch(e.target.value);
   }
 
   return (
