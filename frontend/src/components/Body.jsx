@@ -12,6 +12,7 @@ const Body = () => {
   const [taskList, updateTaskList] = useState([]);
   const [filteredTaskList, updateFilteredTaskList] = useState([]);
   const [useFilteredTasks, setUseFilteredTasks] = useState(false);
+  const [search, setSearch] = useState('');
   const [checkedTasks, updateCheckedTasks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [editingTaskIndex, setEditingTaskIndex] = useState(null);
@@ -201,6 +202,18 @@ const Body = () => {
     }
   };
 
+  const handleSearch = (e) => {
+    const searching = e.target.value;
+    setSearch(searching);
+    if (searching === ""){
+      setUseFilteredTasks(false);
+    } else {
+      const filteredTasks = taskList.filter((task) => task.title.includes(searching));
+      setUseFilteredTasks(true);
+      updateFilteredTaskList(filteredTasks);
+    }
+  }
+
   return (
     <>
       <DragDropContext onDragEnd={handleDragEnd}>
@@ -236,6 +249,10 @@ const Body = () => {
             <option value="important">Important</option>
             <option value="upcoming">Upcoming</option>
           </select>
+        </div>
+        <div>
+          <label htmlFor="search">Search: </label>
+          <input name="search" value={search} onChange={handleSearch}></input>
         </div>
         {(useFilteredTasks ? filteredTaskList : taskList).length > 0 ? (
           <>
