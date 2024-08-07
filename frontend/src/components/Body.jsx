@@ -370,9 +370,16 @@ const Body = () => {
             <Export taskList={taskList} />
           </>
         ) : (
-          <div>
-            <p>Currently no active tasks</p>
-          </div>
+          (useFilteredTasks ? 
+            <div>
+              <p>Currently no active tasks with filter</p>
+            </div>
+          : 
+            <div>
+              <p>Currently no active tasks</p>
+            </div>
+        )
+
         )}
       </DragDropContext>
     </>
