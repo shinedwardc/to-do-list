@@ -10,10 +10,13 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 const Body = () => {
   const [taskList, updateTaskList] = useState([]);
+  const [filteredTaskList, updateFilteredTaskList] = useState([]);
+  const [useFilteredTasks, setUseFilteredTasks] = useState(false);
   const [checkedTasks, updateCheckedTasks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [editingTaskIndex, setEditingTaskIndex] = useState(null);
   const [selectedSort, setSelectedSort] = useState("");
+  const [selectedFilter, setSelectedFilter] = useState("all");
 
   const fetchTasks = async () => {
     try {
@@ -24,6 +27,7 @@ const Body = () => {
       });
       if (Array.isArray(tasks)) {
         updateTaskList(tasks);
+        updateFilteredTaskList(tasks);
       } else {
         updateTaskList([]);
       }
@@ -183,27 +187,57 @@ const Body = () => {
     }
   };
 
+  const handleFilterChange = (e) => {
+    const filter = e.target.value;
+    console.log(filter);
+    setSelectedFilter(filter);
+    if (filter === "all") {
+      setUseFilteredTasks(false);
+    } else {
+      const filteredTasks = taskList.filter((task) => task.category === filter);
+      console.log(filteredTasks);
+      setUseFilteredTasks(true);
+      updateFilteredTaskList(filteredTasks);
+    }
+  };
+
   return (
     <>
       <DragDropContext onDragEnd={handleDragEnd}>
         <Form onSubmit={addTask} />
         <h2>Current tasks:</h2>
-        <label htmlFor="sort">Sort by: </label>
-        <select
-          name="sort"
-          id="taskSort"
-          value={selectedSort}
-          onChange={handleSelectChange}
-        >
-          <option value=""></option>
-          <option value="createdOrder">Created order</option>
-          <option value="ascendAlphabet">Ascending alphabetically</option>
-          <option value="descendAlphabet">Descending alphabetically</option>
-          <option value="category">
-            Category (in order of Urgent, Important, Upcoming)
-          </option>
-        </select>
-        {taskList.length > 0 ? (
+        <div>
+          <label htmlFor="sort">Sort by: </label>
+          <select
+            name="sort"
+            id="taskSort"
+            value={selectedSort}
+            onChange={handleSelectChange}
+          >
+            <option value=""></option>
+            <option value="createdOrder">Created order</option>
+            <option value="ascendAlphabet">Ascending alphabetically</option>
+            <option value="descendAlphabet">Descending alphabetically</option>
+            <option value="category">
+              Category (in order of Urgent, Important, Upcoming)
+            </option>
+          </select>
+        </div>
+        <div>
+          <label htmlFor="sort">Filter by: </label>
+          <select
+            name="filter"
+            id="taskFilter"
+            value={selectedFilter}
+            onChange={handleFilterChange}
+          >
+            <option value="all">All categories</option>
+            <option value="urgent">Urgent</option>
+            <option value="important">Important</option>
+            <option value="upcoming">Upcoming</option>
+          </select>
+        </div>
+        {(useFilteredTasks ? filteredTaskList : taskList).length > 0 ? (
           <>
             <Droppable droppableId="tasks">
               {(provided) => (
@@ -228,64 +262,68 @@ const Body = () => {
                     alignItems="center"
                   >
                     {!isLoading ? (
-                      taskList.map((task, index) => (
-                        <Draggable
-                          key={task._id}
-                          draggableId={task._id}
-                          index={index}
-                        >
-                          {(provided) => (
-                            <Card
-                              variant="outlined"
-                              direction="column"
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}
-                              sx={{
-                                maxWidth: 500,
-                                marginTop: 1,
-                                marginBottom: 1,
-                                opacity: checkedTasks?.includes(index)
-                                  ? 0.5
-                                  : 1,
-                                ":hover": {
-                                  boxShadow: 20,
-                                },
-                              }}
-                            >
-                              {index === editingTaskIndex ? (
-                                <>
-                                  <Form
-                                    onSubmit={(task) => editTask(task)}
-                                    initialValues={task}
-                                    key={index}
-                                  />
-                                </>
-                              ) : (
-                                <>
-                                  <Task task={task} />
-                                  <Checkbox
-                                    onChange={() => handleCheckBoxChange(index)}
-                                  />
-                                  <Button
-                                    variant="outlined"
-                                    onClick={() => setEditingTaskIndex(index)}
-                                  >
-                                    Edit
-                                  </Button>
-                                  <Button
-                                    variant="outlined"
-                                    color="error"
-                                    onClick={() => deleteTask(index)}
-                                  >
-                                    Delete
-                                  </Button>
-                                </>
-                              )}
-                            </Card>
-                          )}
-                        </Draggable>
-                      ))
+                      (useFilteredTasks ? filteredTaskList : taskList).map(
+                        (task, index) => (
+                          <Draggable
+                            key={task._id}
+                            draggableId={task._id}
+                            index={index}
+                          >
+                            {(provided) => (
+                              <Card
+                                variant="outlined"
+                                direction="column"
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                sx={{
+                                  maxWidth: 500,
+                                  marginTop: 1,
+                                  marginBottom: 1,
+                                  opacity: checkedTasks?.includes(index)
+                                    ? 0.5
+                                    : 1,
+                                  ":hover": {
+                                    boxShadow: 20,
+                                  },
+                                }}
+                              >
+                                {index === editingTaskIndex ? (
+                                  <>
+                                    <Form
+                                      onSubmit={(task) => editTask(task)}
+                                      initialValues={task}
+                                      key={index}
+                                    />
+                                  </>
+                                ) : (
+                                  <>
+                                    <Task task={task} />
+                                    <Checkbox
+                                      onChange={() =>
+                                        handleCheckBoxChange(index)
+                                      }
+                                    />
+                                    <Button
+                                      variant="outlined"
+                                      onClick={() => setEditingTaskIndex(index)}
+                                    >
+                                      Edit
+                                    </Button>
+                                    <Button
+                                      variant="outlined"
+                                      color="error"
+                                      onClick={() => deleteTask(index)}
+                                    >
+                                      Delete
+                                    </Button>
+                                  </>
+                                )}
+                              </Card>
+                            )}
+                          </Draggable>
+                        ),
+                      )
                     ) : (
                       <div
                         style={{

@@ -96,7 +96,11 @@ const Form = ({ onSubmit, initialValues }) => {
               value={inputs.description}
             />
             <h4>Select a category: </h4>
-            <select name="category" onChange={handleChange}>
+            <select
+              name="category"
+              value={inputs.category}
+              onChange={handleChange}
+            >
               <option value=""></option>
               <option value="urgent">Urgent</option>
               <option value="important">Important</option>
