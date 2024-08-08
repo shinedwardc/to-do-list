@@ -17,6 +17,7 @@ import {
   MenuItem,
   Select,
   TextField,
+  Typography
 } from "@mui/material";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
@@ -238,7 +239,7 @@ const Body = () => {
     <>
       <DragDropContext onDragEnd={handleDragEnd}>
         <Form onSubmit={addTask} />
-        <h2>Current tasks:</h2>
+        <Typography variant = "h5">Current tasks: </Typography>
         <Box>
           <FormControl sx={{ m: 1, width: 250 }}>
             <InputLabel htmlFor="sort">Sort by</InputLabel>
@@ -266,8 +267,8 @@ const Body = () => {
             </FormHelperText>
           </FormControl>
         </Box>
-        <Box>
-          <FormControl sx={{ m: 1, width: 250 }}>
+        <Box sx = {{mb: 1, justifyContent: "space-evenly"}}>
+          <FormControl sx={{mr: 1, width: 250 }}>
             <InputLabel htmlFor="sort">Filter by</InputLabel>
             <Select
               name="filter"
@@ -283,15 +284,17 @@ const Body = () => {
             </Select>
             <FormHelperText>Filter tasks based on category</FormHelperText>
           </FormControl>
-        </Box>
-        <Box sx={{ "& > :not(style)": { m: 1, width: 250 } }}>
           <TextField
+            sx = {{ml:1,width:250}}
             label="Search"
             name="search"
             helperText="Search tasks with text input"
             value={search}
             onChange={handleSearch}
           />
+        </Box>
+        <Box sx={{ "& > :not(style)": { m: 1, width: 250 } }}>
+
         </Box>
         {(useFilteredTasks ? filteredTaskList : taskList).length > 0 ? (
           <>

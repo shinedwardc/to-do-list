@@ -4,6 +4,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { showWarnToast } from "../utility/toast";
 import "react-toastify/dist/ReactToastify.css";
 import styles from "../styles/Form.module.css";
+import { Box, TextField, Typography, InputLabel, MenuItem, FormControl, Select, FormHelperText } from '@mui/material';
+import { MuiColorInput } from 'mui-color-input';
 
 const Form = ({ onSubmit, initialValues }) => {
   const [inputs, setInputs] = useState({
@@ -33,8 +35,8 @@ const Form = ({ onSubmit, initialValues }) => {
   };
 
   const [currentColor, updateCurrentColor] = useState("#90EE90");
-  const handleColorChange = (e) => {
-    updateCurrentColor(e.target.value);
+  const handleColorChange = (newValue) => {
+    updateCurrentColor(newValue);
   };
 
   const handleTagSubmit = (e) => {
@@ -81,53 +83,68 @@ const Form = ({ onSubmit, initialValues }) => {
       <form className={styles.form} onSubmit={handleFormSubmit}>
         <div className={styles.questionnare}>
           <div className={styles.titleForm}>
-            <h4>Title: </h4>
-            <input
+            <Typography sx={{m:1}} variant="h5">Title</Typography>
+            <TextField
+              sx={{width:230}}
               type="text"
               name="title"
+              size="small"
+              variant="outlined"
               onChange={handleChange}
               value={inputs.title}
             />
-            <h4>Description: describe more of the task you need to do</h4>
-            <input
+            <Typography sx={{m:1}} variant="h6">Description</Typography>
+            <TextField
+              sx={{width:230}}
               type="text"
               name="description"
+              size="small"
+              variant="outlined"
+              helperText = "Describe more of the task in detail"
               onChange={handleChange}
               value={inputs.description}
             />
-            <h4>Select a category: </h4>
-            <select
-              name="category"
-              value={inputs.category}
-              onChange={handleChange}
-            >
-              <option value=""></option>
-              <option value="urgent">Urgent</option>
-              <option value="important">Important</option>
-              <option value="upcoming">Upcoming</option>
-            </select>
+            <Typography sx={{m:1}} variant="h6">Category</Typography>
+            <FormControl>
+              <Select
+                sx = {{height: 40,width:230}}
+                name="category"
+                value={inputs.category}
+                onChange={handleChange}
+              >
+                <MenuItem value=""><em>None</em></MenuItem>
+                <MenuItem value="urgent">Urgent</MenuItem>
+                <MenuItem value="important">Important</MenuItem>
+                <MenuItem value="upcoming">Upcoming</MenuItem>
+              </Select>
+              <FormHelperText sx = {{textAlign: "center"}}>Pick a category for the task</FormHelperText>
+            </FormControl>
           </div>
           <div className={styles.tagForm}>
-            <div style={{ paddingBottom: 10 }}>
-              <h5>Tag (add a list of tags for the task): </h5>
-              <input
+            <div style={{ paddingBottom: 15 }}>
+              <Typography m = {1} variant="h6">Tags</Typography>
+              <TextField
                 type="text"
                 name="tag"
+                size="small"
+                helperText="Add custom tags with color for the task"
                 value={currentTag}
                 onChange={handleTagChange}
               />
             </div>
             <div>
-              <input
-                type="color"
-                id="colorInput"
-                name="color"
-                value={currentColor.toString()}
-                onChange={handleColorChange}
-              />
-              <label htmlFor="colorInput"> Choose a color for the tag</label>
+              <FormControl sx = {{m: 0}}>
+                <MuiColorInput
+                  id="colorInput"
+                  name="color"
+                  format="hex"
+                  value={currentColor}
+                  onChange={handleColorChange}
+                />
+                <FormHelperText sx = {{textAlign: "center"}}>Colorize your tag</FormHelperText>
+              </FormControl>
             </div>
-            <Button onClick={handleTagSubmit} type="button">
+            <Button sx = {{marginTop: 1, marginBottom: 1}}onClick={handleTagSubmit} variant="outlined">
               Add tag
             </Button>
             <div>
