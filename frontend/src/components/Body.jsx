@@ -3,16 +3,28 @@ import ky from "ky";
 import Form from "./Form";
 import Task from "./Task";
 import Export from "./Export";
-import Card from "@mui/material/Card";
 import { showSuccessToast } from "../utility/toast";
-import { Grid, Button, Checkbox, CircularProgress } from "@mui/material";
+import {
+  Box,
+  Grid,
+  Button,
+  Checkbox,
+  CircularProgress,
+  Card,
+  FormControl,
+  FormHelperText,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 const Body = () => {
   const [taskList, updateTaskList] = useState([]);
   const [filteredTaskList, updateFilteredTaskList] = useState([]);
   const [useFilteredTasks, setUseFilteredTasks] = useState(false);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   const [checkedTasks, updateCheckedTasks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [editingTaskIndex, setEditingTaskIndex] = useState(null);
@@ -194,10 +206,9 @@ const Body = () => {
 
   const filterTasks = () => {
     let filtered = taskList;
-    if (selectedFilter === "all" && search === ""){
+    if (selectedFilter === "all" && search === "") {
       setUseFilteredTasks(false);
-    }
-    else{
+    } else {
       if (selectedFilter !== "all") {
         setUseFilteredTasks(true);
         filtered = filtered.filter((task) => task.category === selectedFilter);
@@ -205,14 +216,14 @@ const Body = () => {
       if (search !== "") {
         setUseFilteredTasks(true);
         const lowerCaseSearch = search.toLowerCase();
-        filtered = filtered.filter((task) =>
-          task.title.toLowerCase().includes(lowerCaseSearch) ||
-          task.description.toLowerCase().includes(lowerCaseSearch)
+        filtered = filtered.filter(
+          (task) =>
+            task.title.toLowerCase().includes(lowerCaseSearch) ||
+            task.description.toLowerCase().includes(lowerCaseSearch),
         );
       }
       updateFilteredTaskList(filtered);
     }
-    
   };
 
   const handleFilterChange = (e) => {
@@ -221,48 +232,67 @@ const Body = () => {
 
   const handleSearch = (e) => {
     setSearch(e.target.value);
-  }
+  };
 
   return (
     <>
       <DragDropContext onDragEnd={handleDragEnd}>
         <Form onSubmit={addTask} />
         <h2>Current tasks:</h2>
-        <div>
-          <label htmlFor="sort">Sort by: </label>
-          <select
-            name="sort"
-            id="taskSort"
-            value={selectedSort}
-            onChange={handleSelectChange}
-          >
-            <option value=""></option>
-            <option value="createdOrder">Created order</option>
-            <option value="ascendAlphabet">Ascending alphabetically</option>
-            <option value="descendAlphabet">Descending alphabetically</option>
-            <option value="category">
-              Category (in order of Urgent, Important, Upcoming)
-            </option>
-          </select>
-        </div>
-        <div>
-          <label htmlFor="sort">Filter by: </label>
-          <select
-            name="filter"
-            id="taskFilter"
-            value={selectedFilter}
-            onChange={handleFilterChange}
-          >
-            <option value="all">All categories</option>
-            <option value="urgent">Urgent</option>
-            <option value="important">Important</option>
-            <option value="upcoming">Upcoming</option>
-          </select>
-        </div>
-        <div>
-          <label htmlFor="search">Search: </label>
-          <input name="search" value={search} onChange={handleSearch}></input>
-        </div>
+        <Box>
+          <FormControl sx={{ m: 1, width: 250 }}>
+            <InputLabel htmlFor="sort">Sort by</InputLabel>
+            <Select
+              name="sort"
+              id="taskSort"
+              value={selectedSort}
+              onChange={handleSelectChange}
+              label="Sort by"
+            >
+              <MenuItem value="">
+                <em>Default</em>
+              </MenuItem>
+              <MenuItem value="createdOrder">Created order</MenuItem>
+              <MenuItem value="ascendAlphabet">
+                Ascending alphabetically
+              </MenuItem>
+              <MenuItem value="descendAlphabet">
+                Descending alphabetically
+              </MenuItem>
+              <MenuItem value="category">Category</MenuItem>
+            </Select>
+            <FormHelperText>
+              Sort the order of tasks displayed below
+            </FormHelperText>
+          </FormControl>
+        </Box>
+        <Box>
+          <FormControl sx={{ m: 1, width: 250 }}>
+            <InputLabel htmlFor="sort">Filter by</InputLabel>
+            <Select
+              name="filter"
+              id="taskFilter"
+              label="Filter by"
+              value={selectedFilter}
+              onChange={handleFilterChange}
+            >
+              <MenuItem value="all">All categories</MenuItem>
+              <MenuItem value="urgent">Urgent</MenuItem>
+              <MenuItem value="important">Important</MenuItem>
+              <MenuItem value="upcoming">Upcoming</MenuItem>
+            </Select>
+            <FormHelperText>Filter tasks based on category</FormHelperText>
+          </FormControl>
+        </Box>
+        <Box sx={{ "& > :not(style)": { m: 1, width: 250 } }}>
+          <TextField
+            label="Search"
+            name="search"
+            helperText="Search tasks with text input"
+            value={search}
+            onChange={handleSearch}
+          />
+        </Box>
         {(useFilteredTasks ? filteredTaskList : taskList).length > 0 ? (
           <>
             <Droppable droppableId="tasks">
@@ -369,17 +399,14 @@ const Body = () => {
             </Droppable>
             <Export taskList={taskList} />
           </>
+        ) : useFilteredTasks ? (
+          <div>
+            <p>Currently no active tasks with filter</p>
+          </div>
         ) : (
-          (useFilteredTasks ? 
-            <div>
-              <p>Currently no active tasks with filter</p>
-            </div>
-          : 
-            <div>
-              <p>Currently no active tasks</p>
-            </div>
-        )
-
+          <div>
+            <p>Currently no active tasks</p>
+          </div>
         )}
       </DragDropContext>
     </>
