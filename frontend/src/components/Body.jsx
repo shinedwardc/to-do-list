@@ -17,7 +17,7 @@ import {
   MenuItem,
   Select,
   TextField,
-  Typography
+  Typography,
 } from "@mui/material";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
@@ -238,17 +238,17 @@ const Body = () => {
   return (
     <>
       <DragDropContext onDragEnd={handleDragEnd}>
-        <Form onSubmit={addTask} />
-        <Typography variant = "h5">Current tasks: </Typography>
+        <Form onSubmit={addTask} isEditing={false} />
+        <Typography variant="h5">Current tasks: </Typography>
         <Box>
-          <FormControl sx={{ m: 1, width: 250 }}>
+          <FormControl size="small" sx={{ m: 1, width: 250 }}>
             <InputLabel htmlFor="sort">Sort by</InputLabel>
             <Select
               name="sort"
               id="taskSort"
+              label="Sort by"
               value={selectedSort}
               onChange={handleSelectChange}
-              label="Sort by"
             >
               <MenuItem value="">
                 <em>Default</em>
@@ -262,13 +262,13 @@ const Body = () => {
               </MenuItem>
               <MenuItem value="category">Category</MenuItem>
             </Select>
-            <FormHelperText>
-              Sort the order of tasks displayed below
+            <FormHelperText sx={{ textAlign: "center" }}>
+              Sort the order of tasks below
             </FormHelperText>
           </FormControl>
         </Box>
-        <Box sx = {{mb: 1, justifyContent: "space-evenly"}}>
-          <FormControl sx={{mr: 1, width: 250 }}>
+        <Box sx={{ mb: 1, justifyContent: "space-evenly" }}>
+          <FormControl sx={{ mr: 1, width: 250 }} size="small">
             <InputLabel htmlFor="sort">Filter by</InputLabel>
             <Select
               name="filter"
@@ -282,19 +282,24 @@ const Body = () => {
               <MenuItem value="important">Important</MenuItem>
               <MenuItem value="upcoming">Upcoming</MenuItem>
             </Select>
-            <FormHelperText>Filter tasks based on category</FormHelperText>
+            <FormHelperText sx={{ textAlign: "center" }}>
+              Filter tasks based on category
+            </FormHelperText>
           </FormControl>
           <TextField
-            sx = {{ml:1,width:250}}
+            sx={{ ml: 1, width: 250 }}
             label="Search"
             name="search"
             helperText="Search tasks with text input"
+            FormHelperTextProps={{
+              sx: {
+                textAlign: "center",
+              },
+            }}
             value={search}
             onChange={handleSearch}
+            size="small"
           />
-        </Box>
-        <Box sx={{ "& > :not(style)": { m: 1, width: 250 } }}>
-
         </Box>
         {(useFilteredTasks ? filteredTaskList : taskList).length > 0 ? (
           <>
@@ -314,6 +319,7 @@ const Body = () => {
                       border: "1px solid red",
                       maxWidth: 1000,
                       margin: "0 auto",
+                      backgroundColor: "lightblue",
                     }}
                     container
                     direction="column"
@@ -336,7 +342,7 @@ const Body = () => {
                                 {...provided.draggableProps}
                                 {...provided.dragHandleProps}
                                 sx={{
-                                  maxWidth: 500,
+                                  width: 625,
                                   marginTop: 1,
                                   marginBottom: 1,
                                   opacity: checkedTasks?.includes(index)
@@ -352,6 +358,7 @@ const Body = () => {
                                     <Form
                                       onSubmit={(task) => editTask(task)}
                                       initialValues={task}
+                                      isEditing={true}
                                       key={index}
                                     />
                                   </>

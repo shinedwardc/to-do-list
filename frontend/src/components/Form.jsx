@@ -4,10 +4,20 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { showWarnToast } from "../utility/toast";
 import "react-toastify/dist/ReactToastify.css";
 import styles from "../styles/Form.module.css";
-import { Box, TextField, Typography, InputLabel, MenuItem, FormControl, Select, FormHelperText } from '@mui/material';
-import { MuiColorInput } from 'mui-color-input';
+import {
+  Box,
+  TextField,
+  Typography,
+  InputLabel,
+  MenuItem,
+  FormControl,
+  Select,
+  FormHelperText,
+} from "@mui/material";
+import { MuiColorInput } from "mui-color-input";
+import fontControlContrast from "font-color-contrast";
 
-const Form = ({ onSubmit, initialValues }) => {
+const Form = ({ onSubmit, initialValues, isEditing }) => {
   const [inputs, setInputs] = useState({
     title: "",
     description: "",
@@ -83,9 +93,11 @@ const Form = ({ onSubmit, initialValues }) => {
       <form className={styles.form} onSubmit={handleFormSubmit}>
         <div className={styles.questionnare}>
           <div className={styles.titleForm}>
-            <Typography sx={{m:1}} variant="h5">Title</Typography>
+            <Typography sx={{ m: 1 }} variant="h5">
+              Title
+            </Typography>
             <TextField
-              sx={{width:230}}
+              sx={{ width: 230 }}
               type="text"
               name="title"
               size="small"
@@ -93,36 +105,46 @@ const Form = ({ onSubmit, initialValues }) => {
               onChange={handleChange}
               value={inputs.title}
             />
-            <Typography sx={{m:1}} variant="h6">Description</Typography>
+            <Typography sx={{ m: 1 }} variant="h6">
+              Description
+            </Typography>
             <TextField
-              sx={{width:230}}
+              sx={{ width: 230 }}
               type="text"
               name="description"
               size="small"
               variant="outlined"
-              helperText = "Describe more of the task in detail"
+              helperText="Describe more of the task in detail"
               onChange={handleChange}
               value={inputs.description}
             />
-            <Typography sx={{m:1}} variant="h6">Category</Typography>
+            <Typography sx={{ m: 1 }} variant="h6">
+              Category
+            </Typography>
             <FormControl>
               <Select
-                sx = {{height: 40,width:230}}
+                sx={{ height: 40, width: 230 }}
                 name="category"
                 value={inputs.category}
                 onChange={handleChange}
               >
-                <MenuItem value=""><em>None</em></MenuItem>
+                <MenuItem value="">
+                  <em>None</em>
+                </MenuItem>
                 <MenuItem value="urgent">Urgent</MenuItem>
                 <MenuItem value="important">Important</MenuItem>
                 <MenuItem value="upcoming">Upcoming</MenuItem>
               </Select>
-              <FormHelperText sx = {{textAlign: "center"}}>Pick a category for the task</FormHelperText>
+              <FormHelperText sx={{ textAlign: "center" }}>
+                Pick a category for the task
+              </FormHelperText>
             </FormControl>
           </div>
           <div className={styles.tagForm}>
             <div style={{ paddingBottom: 15 }}>
-              <Typography m = {1} variant="h6">Tags</Typography>
+              <Typography m={1} variant="h6">
+                Tags
+              </Typography>
               <TextField
                 type="text"
                 name="tag"
@@ -133,7 +155,7 @@ const Form = ({ onSubmit, initialValues }) => {
               />
             </div>
             <div>
-              <FormControl sx = {{m: 0}}>
+              <FormControl sx={{ m: 0 }}>
                 <MuiColorInput
                   id="colorInput"
                   name="color"
@@ -141,10 +163,16 @@ const Form = ({ onSubmit, initialValues }) => {
                   value={currentColor}
                   onChange={handleColorChange}
                 />
-                <FormHelperText sx = {{textAlign: "center"}}>Colorize your tag</FormHelperText>
+                <FormHelperText sx={{ textAlign: "center" }}>
+                  Colorize your tag
+                </FormHelperText>
               </FormControl>
             </div>
-            <Button sx = {{marginTop: 1, marginBottom: 1}}onClick={handleTagSubmit} variant="outlined">
+            <Button
+              sx={{ marginTop: 1, marginBottom: 1 }}
+              onClick={handleTagSubmit}
+              variant="outlined"
+            >
               Add tag
             </Button>
             <div>
@@ -155,6 +183,7 @@ const Form = ({ onSubmit, initialValues }) => {
                 >
                   <span
                     style={{
+                      color: fontControlContrast(tag.color),
                       backgroundColor: tag.color,
                       borderRadius: 15,
                       padding: 5,
@@ -179,9 +208,19 @@ const Form = ({ onSubmit, initialValues }) => {
           </div>
 
           <div className={styles.button}>
-            <Button type="submit" variant="contained">
-              Submit
-            </Button>
+            {isEditing ? (
+              <>
+                <Button type="submit" variant="contained">
+                  Save changes
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button type="submit" variant="contained">
+                  Submit
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </form>

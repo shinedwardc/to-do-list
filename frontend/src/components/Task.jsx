@@ -1,9 +1,10 @@
 import React from "react";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
+import { CardContent, Typography, Stack, Chip } from "@mui/material";
+import fontControlContrast from "font-color-contrast";
+import { DateTime } from "luxon";
 
 const Task = ({ task }) => {
-  const date = new Date(task.createdAt);
+  const date = new DateTime(task.createdAt);
 
   return (
     <CardContent>
@@ -11,26 +12,31 @@ const Task = ({ task }) => {
         {task.title}
       </Typography>
       <Typography variant="body2">{task.description}</Typography>
-      <Typography variant="body2" color="text.secondary">
+      <Typography variant="subtitle1" color="text.secondary">
         {task.category}
       </Typography>
-      <Typography>{"Task created at " + date.toDateString()}</Typography>
-      <div>
-        {task.tags &&
+      <Typography>{"Task created at " + date.toLocaleString()}</Typography>
+      <Stack
+        sx={{ marginBottom: -1 }}
+        direction="row"
+        spacing={1}
+        justifyContent="center"
+      >
+        {task.tags.length > 0 &&
           task.tags.map((tag, index) => (
-            <span
+            <Chip
               key={index}
-              style={{
-                marginRight: 8,
+              sx={{
+                m: 1,
+                padding: 1,
+                color: fontControlContrast(tag.color),
                 backgroundColor: tag.color,
-                borderRadius: 15,
-                padding: 5,
               }}
-            >
-              {tag.tag}
-            </span>
+              label={tag.tag}
+              variant="outlined"
+            />
           ))}
-      </div>
+      </Stack>
     </CardContent>
   );
 };
