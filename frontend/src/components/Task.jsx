@@ -4,7 +4,9 @@ import fontControlContrast from "font-color-contrast";
 import { DateTime } from "luxon";
 
 const Task = ({ task }) => {
-  const date = new DateTime(task.createdAt);
+  //console.log(typeof(task.createdDate))
+  const dueDate = DateTime.fromJSDate(new Date(task.dueDate));
+  //const createdDate = DateTime.fromJSDate(new Date(task.createdDate));
 
   return (
     <CardContent>
@@ -15,7 +17,7 @@ const Task = ({ task }) => {
       <Typography variant="subtitle1" color="text.secondary">
         {task.category}
       </Typography>
-      <Typography>{"Task created at " + date.toLocaleString()}</Typography>
+      <Typography>{"Due date " + dueDate.toLocaleString()}</Typography>
       <Stack
         sx={{ marginBottom: -1 }}
         direction="row"

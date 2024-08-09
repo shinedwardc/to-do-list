@@ -14,14 +14,18 @@ import {
   Select,
   FormHelperText,
 } from "@mui/material";
+import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
+import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon";
 import { MuiColorInput } from "mui-color-input";
 import fontControlContrast from "font-color-contrast";
+import { DateTime } from "luxon";
 
 const Form = ({ onSubmit, initialValues, isEditing }) => {
   const [inputs, setInputs] = useState({
     title: "",
     description: "",
     category: "",
+    dueDate: null,
     tags: [],
   });
 
@@ -31,12 +35,25 @@ const Form = ({ onSubmit, initialValues, isEditing }) => {
     }
   }, [initialValues]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setInputs((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  const handleChange = (e, value) => {
+    if (e && e.target) {
+      // Regular input field handling
+      const { name, value } = e.target;
+      setInputs((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    } else {
+      // DatePicker field handling
+      const name = e;
+      console.log(name);
+      const date = value.toJSDate();
+      console.log(date);
+      setInputs((prev) => ({
+        ...prev,
+        [name]: date,
+      }));
+    }
   };
 
   const [currentTag, updateCurrentTag] = useState("");
@@ -84,8 +101,9 @@ const Form = ({ onSubmit, initialValues, isEditing }) => {
       return;
     }
     //alert('Submitted task');
+    console.log('inputs: ', inputs);
     onSubmit(inputs);
-    setInputs({ title: "", description: "", category: "", tags: [] });
+    setInputs({ title: "", description: "", category: "", dueDate: null, tags: [] });
   };
 
   return (
@@ -139,6 +157,15 @@ const Form = ({ onSubmit, initialValues, isEditing }) => {
                 Pick a category for the task
               </FormHelperText>
             </FormControl>
+            <Typography sx={{ m:1 }} variant="h6">
+              Due date
+            </Typography>
+            <LocalizationProvider dateAdapter={AdapterLuxon}>
+              <DatePicker 
+               name="dueDate"
+               selected={inputs.dueDate}
+               onChange={(date) => handleChange('dueDate', date)}/>
+            </LocalizationProvider>
           </div>
           <div className={styles.tagForm}>
             <div style={{ paddingBottom: 15 }}>
