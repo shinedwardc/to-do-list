@@ -101,9 +101,15 @@ const Form = ({ onSubmit, initialValues, isEditing }) => {
       return;
     }
     //alert('Submitted task');
-    console.log('inputs: ', inputs);
+    console.log("inputs: ", inputs);
     onSubmit(inputs);
-    setInputs({ title: "", description: "", category: "", dueDate: null, tags: [] });
+    setInputs({
+      title: "",
+      description: "",
+      category: "",
+      dueDate: null,
+      tags: [],
+    });
   };
 
   return (
@@ -157,14 +163,15 @@ const Form = ({ onSubmit, initialValues, isEditing }) => {
                 Pick a category for the task
               </FormHelperText>
             </FormControl>
-            <Typography sx={{ m:1 }} variant="h6">
+            <Typography sx={{ m: 1 }} variant="h6">
               Due date
             </Typography>
             <LocalizationProvider dateAdapter={AdapterLuxon}>
-              <DatePicker 
-               name="dueDate"
-               selected={inputs.dueDate}
-               onChange={(date) => handleChange('dueDate', date)}/>
+              <DatePicker
+                name="dueDate"
+                selected={inputs.dueDate}
+                onChange={(date) => handleChange("dueDate", date)}
+              />
             </LocalizationProvider>
           </div>
           <div className={styles.tagForm}>
